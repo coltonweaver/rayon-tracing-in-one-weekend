@@ -13,27 +13,22 @@ pub struct Vec3 {
 }
 
 impl Vec3 {
-    #[inline]
-    pub const fn new(x: f32, y: f32, z: f32) -> Self {
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
         Vec3 { x, y, z }
     }
 
-    #[inline]
-    pub const fn zeroes() -> Self {
+    pub fn zeroes() -> Self {
         Vec3::new(0.0, 0.0, 0.0)
     }
 
-    #[inline]
-    pub const fn ones() -> Self {
+    pub fn ones() -> Self {
         Vec3::new(1.0, 1.0, 1.0)
     }
 
-    #[inline]
     pub fn random() -> Self {
         Vec3::new(rand::random(), rand::random(), rand::random())
     }
 
-    #[inline]
     pub fn random_range(min: f32, max: f32) -> Self {
         let mut rng = thread_rng();
         Vec3::new(
@@ -90,18 +85,6 @@ impl Neg for Vec3 {
     }
 }
 
-impl Neg for &Vec3 {
-    type Output = Vec3;
-
-    fn neg(self) -> Vec3 {
-        Vec3 {
-            x: -self.x,
-            y: -self.y,
-            z: -self.z,
-        }
-    }
-}
-
 impl Add for Vec3 {
     type Output = Self;
 
@@ -114,32 +97,8 @@ impl Add for Vec3 {
     }
 }
 
-impl Add for &Vec3 {
-    type Output = Vec3;
-
-    fn add(self, other: Self) -> Vec3 {
-        Vec3 {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-        }
-    }
-}
-
-impl Add<Vec3> for &Vec3 {
-    type Output = Vec3;
-
-    fn add(self, other: Vec3) -> Vec3 {
-        Vec3 {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-        }
-    }
-}
-
-impl AddAssign<&Vec3> for Vec3 {
-    fn add_assign(&mut self, other: &Vec3) {
+impl AddAssign<Vec3> for Vec3 {
+    fn add_assign(&mut self, other: Vec3) {
         self.x = self.x + other.x;
         self.y = self.y + other.y;
         self.z = self.z + other.z;
@@ -150,42 +109,6 @@ impl Sub<Vec3> for Vec3 {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
-        Vec3 {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
-        }
-    }
-}
-
-impl Sub<Vec3> for &Vec3 {
-    type Output = Vec3;
-
-    fn sub(self, other: Vec3) -> Vec3 {
-        Vec3 {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
-        }
-    }
-}
-
-impl Sub for &Vec3 {
-    type Output = Vec3;
-
-    fn sub(self, other: &Vec3) -> Vec3 {
-        Vec3 {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
-        }
-    }
-}
-
-impl Sub<&Vec3> for Vec3 {
-    type Output = Vec3;
-
-    fn sub(self, other: &Vec3) -> Vec3 {
         Vec3 {
             x: self.x - other.x,
             y: self.y - other.y,
@@ -206,34 +129,10 @@ impl Mul<Vec3> for Vec3 {
     }
 }
 
-impl Mul<&Vec3> for Vec3 {
-    type Output = Self;
-
-    fn mul(self, other: &Self) -> Self {
-        Vec3 {
-            x: self.x * other.x,
-            y: self.y * other.y,
-            z: self.z * other.z,
-        }
-    }
-}
-
 impl Mul<f32> for Vec3 {
     type Output = Self;
 
     fn mul(self, value: f32) -> Self {
-        Vec3 {
-            x: self.x * value,
-            y: self.y * value,
-            z: self.z * value,
-        }
-    }
-}
-
-impl Mul<f32> for &Vec3 {
-    type Output = Vec3;
-
-    fn mul(self, value: f32) -> Vec3 {
         Vec3 {
             x: self.x * value,
             y: self.y * value,
@@ -254,18 +153,6 @@ impl Div<f32> for Vec3 {
     type Output = Self;
 
     fn div(self, value: f32) -> Self {
-        Vec3 {
-            x: self.x / value,
-            y: self.y / value,
-            z: self.z / value,
-        }
-    }
-}
-
-impl Div<f32> for &Vec3 {
-    type Output = Vec3;
-
-    fn div(self, value: f32) -> Vec3 {
         Vec3 {
             x: self.x / value,
             y: self.y / value,

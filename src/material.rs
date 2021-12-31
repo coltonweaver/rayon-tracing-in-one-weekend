@@ -37,7 +37,7 @@ pub struct Metal {
 
 impl Material for Metal {
     fn scatter(&self, ray_in: &mut Ray, rec: &HitRecord) -> Option<(Ray, Color)> {
-        let reflected = reflect(&ray_in.dir.unit_vector(), &rec.normal);
+        let reflected = reflect(ray_in.dir.unit_vector(), rec.normal);
         let scattered = Ray {
             orig: rec.p.clone(),
             dir: reflected + (random_in_unit_sphere() * self.fuzz),
@@ -71,9 +71,9 @@ impl Material for Dialectric {
 
         let direction: Vec3;
         if cannot_refract || reflectance(cos_theta, refraction_ratio) > random() {
-            direction = reflect(&unit_direction, &rec.normal);
+            direction = reflect(unit_direction, rec.normal);
         } else {
-            direction = refract(&unit_direction, &rec.normal, refraction_ratio);
+            direction = refract(unit_direction, rec.normal, refraction_ratio);
         }
 
         let res_ray: Ray = Ray {
@@ -85,11 +85,11 @@ impl Material for Dialectric {
     }
 }
 
-fn reflect(v: &Vec3, n: &Vec3) -> Vec3 {
+fn reflect(v: Vec3, n: Vec3) -> Vec3 {
     v - (n * (v.dot(&n)) * 2.0)
 }
 
-fn refract(uv: &Vec3, n: &Vec3, etai_over_etat: f32) -> Vec3 {
+fn refract(uv: Vec3, n: Vec3, etai_over_etat: f32) -> Vec3 {
     let cos_theta: f32 = (-uv).dot(&n).min(1.0);
     let r_out_perp: Vec3 = (uv + (n * cos_theta)) * etai_over_etat;
     let r_out_parallel: Vec3 = n * (-1.0 * (1.0 - r_out_perp.length_squared()).abs().sqrt());

@@ -29,7 +29,7 @@ pub fn ray_color(r: &mut Ray, world: &HittableList, depth: i32) -> Color {
     (Color::ones() * (1.0 - t)) + (Color::new(0.5, 0.7, 1.0) * t)
 }
 
-pub fn write_color(buf_writer: &mut BufWriter<File>, pixel: &Color, samples_per_pixel: f32) {
+pub fn write_color(buf_writer: &mut BufWriter<File>, pixel: Color, samples_per_pixel: f32) {
     let mut r: f32 = pixel.x;
     let mut g: f32 = pixel.y;
     let mut b: f32 = pixel.z;

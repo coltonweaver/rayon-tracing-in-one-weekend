@@ -25,7 +25,7 @@ mod vec3;
 const ASPECT_RATIO: f32 = 3.0 / 2.0;
 const IMAGE_WIDTH: i32 = 1200;
 const IMAGE_HEIGHT: i32 = (IMAGE_WIDTH as f32 / ASPECT_RATIO) as i32;
-const SAMPLES_PER_PIXEL: i32 = 500;
+const SAMPLES_PER_PIXEL: i32 = 150;
 const MAX_DEPTH: i32 = 50;
 
 fn main() {
@@ -63,7 +63,7 @@ fn main() {
         IMAGE_WIDTH, IMAGE_HEIGHT
     );
     (0..IMAGE_HEIGHT).into_par_iter().rev().for_each(|j| {
-        (0..IMAGE_WIDTH).into_par_iter().for_each(|i| {
+        (0..IMAGE_WIDTH).for_each(|i| {
             // For each sample per pixel, calculate the color, and then finally fold together into sum for one pixel.
             let mut pixel_color = Color::zeroes();
             (0..SAMPLES_PER_PIXEL).into_iter().for_each(|_| {
@@ -71,14 +71,14 @@ fn main() {
                     ((i as f32) + rand::random::<f32>()) / (IMAGE_WIDTH as f32),
                     ((j as f32) + rand::random::<f32>()) / (IMAGE_HEIGHT as f32),
                 );
-                pixel_color += &utils::ray_color(&mut r, &world, MAX_DEPTH);
+                pixel_color += utils::ray_color(&mut r, &world, MAX_DEPTH);
             });
             // Write pixel rgb values to syncrhonized_image_vec, which is converted to the image at the end.
             synchronized_image_vec.write()[j as usize][i as usize] = pixel_color;
         });
     });
 
-    eprintln!("\nDone rendering, writing to file now:");
+    eprintln!("Done rendering, writing to file now:");
     let output_file = File::create("result.ppm").expect("Unable to open result.ppm file!");
     let mut buf_writer = BufWriter::new(output_file);
     buf_writer
@@ -89,12 +89,12 @@ fn main() {
         (0..IMAGE_WIDTH).into_iter().for_each(|i| {
             utils::write_color(
                 &mut buf_writer,
-                &synchronized_image_vec.read()[j as usize][i as usize],
+                synchronized_image_vec.read()[j as usize][i as usize],
                 SAMPLES_PER_PIXEL as f32,
             );
             count += 1;
         });
     });
 
-    eprint!("\nDone!\n");
+    eprintln!("Done!");
 }
