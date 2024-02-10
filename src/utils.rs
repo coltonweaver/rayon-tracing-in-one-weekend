@@ -2,7 +2,7 @@ use rand::{thread_rng, Rng};
 use std::{
     fs::File,
     io::{BufWriter, Write},
-    sync::Arc,
+    rc::Rc,
 };
 
 use crate::hittable::{Hittable, HittableList};
@@ -83,7 +83,7 @@ pub fn random_unit_vector() -> Vec3 {
 pub fn random_in_unit_disk() -> Vec3 {
     loop {
         let mut rng = thread_rng();
-        let p: Vec3 = Vec3::new(rng.gen_range(-1.0, 1.0), rng.gen_range(-1.0, 1.0), 0.0);
+        let p: Vec3 = Vec3::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0), 0.0);
         if p.length_squared() < 1.0 {
             return p;
         }
@@ -99,7 +99,7 @@ pub fn random_scene(world: &mut HittableList) {
     let ground_sphere = Box::new(Sphere {
         center: Point3::new(0.0, -1000.0, 0.0),
         radius: 1000.0,
-        m: Arc::new(ground_material),
+        m: Rc::new(ground_material),
     });
     world.objects.push(ground_sphere);
 
@@ -118,18 +118,18 @@ pub fn random_scene(world: &mut HittableList) {
                     let sphere = Box::new(Sphere {
                         center,
                         radius: 0.2,
-                        m: Arc::new(sphere_material),
+                        m: Rc::new(sphere_material),
                     });
                     world.objects.push(sphere);
                 } else if choose_mat < 0.95 {
                     let mut rng = thread_rng();
                     let albedo = Color::random_range(0.5, 1.0);
-                    let fuzz = rng.gen_range(0.0, 0.5);
+                    let fuzz = rng.gen_range(0.0..0.5);
                     let sphere_material = Metal { albedo, fuzz };
                     let sphere = Box::new(Sphere {
                         center,
                         radius: 0.2,
-                        m: Arc::new(sphere_material),
+                        m: Rc::new(sphere_material),
                     });
                     world.objects.push(sphere);
                 } else {
@@ -137,7 +137,7 @@ pub fn random_scene(world: &mut HittableList) {
                     let sphere = Box::new(Sphere {
                         center,
                         radius: 0.2,
-                        m: Arc::new(sphere_material),
+                        m: Rc::new(sphere_material),
                     });
                     world.objects.push(sphere);
                 }
@@ -149,7 +149,7 @@ pub fn random_scene(world: &mut HittableList) {
     world.objects.push(Box::new(Sphere {
         center: Point3::new(0.0, 1.0, 0.0),
         radius: 1.0,
-        m: Arc::new(material_1),
+        m: Rc::new(material_1),
     }));
 
     let material_2 = Lambertian {
@@ -158,7 +158,7 @@ pub fn random_scene(world: &mut HittableList) {
     world.objects.push(Box::new(Sphere {
         center: Point3::new(-4.0, 1.0, 0.0),
         radius: 1.0,
-        m: Arc::new(material_2),
+        m: Rc::new(material_2),
     }));
 
     let material_3 = Metal {
@@ -168,6 +168,6 @@ pub fn random_scene(world: &mut HittableList) {
     world.objects.push(Box::new(Sphere {
         center: Point3::new(4.0, 1.0, 0.0),
         radius: 1.0,
-        m: Arc::new(material_3),
+        m: Rc::new(material_3),
     }));
 }

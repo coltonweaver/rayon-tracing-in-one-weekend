@@ -1,7 +1,5 @@
 extern crate rand;
 
-use parking_lot::RwLock;
-use rayon::prelude::*;
 use std::{
     fs::File,
     io::{BufWriter, Write},
@@ -42,7 +40,7 @@ fn main() {
     let aperture: f32 = 0.1;
     let dist_to_focus: f32 = 10.0;
 
-    let cam = &Camera::new(
+    let cam = Camera::new(
         lookfrom,
         lookat,
         vup,
@@ -54,15 +52,15 @@ fn main() {
 
     // Render
 
-    let image_vec: Vec<Vec<Color>> =
+    let mut image_vec: Vec<Vec<Color>> =
         vec![vec![Color::zeroes(); IMAGE_WIDTH as usize]; IMAGE_HEIGHT as usize];
-    let synchronized_image_vec = RwLock::new(image_vec);
 
     eprintln!(
         "Rendering image with resolution of {}x{}:",
         IMAGE_WIDTH, IMAGE_HEIGHT
     );
-    (0..IMAGE_HEIGHT).into_par_iter().rev().for_each(|j| {
+
+    (0..IMAGE_HEIGHT).into_iter().rev().for_each(|j| {
         (0..IMAGE_WIDTH).for_each(|i| {
             // For each sample per pixel, calculate the color, and then finally fold together into sum for one pixel.
             let mut pixel_color = Color::zeroes();
@@ -74,7 +72,7 @@ fn main() {
                 pixel_color += utils::ray_color(&mut r, &world, MAX_DEPTH);
             });
             // Write pixel rgb values to syncrhonized_image_vec, which is converted to the image at the end.
-            synchronized_image_vec.write()[j as usize][i as usize] = pixel_color;
+            image_vec[j as usize][i as usize] = pixel_color;
         });
     });
 
@@ -89,7 +87,7 @@ fn main() {
         (0..IMAGE_WIDTH).into_iter().for_each(|i| {
             utils::write_color(
                 &mut buf_writer,
-                synchronized_image_vec.read()[j as usize][i as usize],
+                image_vec[j as usize][i as usize],
                 SAMPLES_PER_PIXEL as f32,
             );
             count += 1;

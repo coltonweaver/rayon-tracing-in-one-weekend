@@ -1,14 +1,14 @@
+use std::rc::Rc;
+
 use crate::hittable::{HitRecord, Hittable};
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 
-use std::sync::Arc;
-
 pub struct Sphere {
     pub center: Point3,
     pub radius: f32,
-    pub m: Arc<dyn Material + Sync + Send>,
+    pub m: Rc<dyn Material>,
 }
 
 impl Hittable for Sphere {

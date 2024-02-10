@@ -6,7 +6,7 @@ use crate::vec3::{Color, Vec3};
 use rand::random;
 
 pub trait Material {
-    fn scatter(&self, ray_in: &mut Ray, rec: &HitRecord) -> Option<(Ray, Color)>;
+    fn scatter(&self, ray_in: &Ray, rec: &HitRecord) -> Option<(Ray, Color)>;
 }
 
 pub struct Lambertian {
@@ -14,7 +14,7 @@ pub struct Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, _ray_in: &mut Ray, rec: &HitRecord) -> Option<(Ray, Color)> {
+    fn scatter(&self, _ray_in: &Ray, rec: &HitRecord) -> Option<(Ray, Color)> {
         let mut scatter_direction = rec.normal + random_unit_vector();
 
         if scatter_direction.near_zero() {
@@ -36,7 +36,7 @@ pub struct Metal {
 }
 
 impl Material for Metal {
-    fn scatter(&self, ray_in: &mut Ray, rec: &HitRecord) -> Option<(Ray, Color)> {
+    fn scatter(&self, ray_in: &Ray, rec: &HitRecord) -> Option<(Ray, Color)> {
         let reflected = reflect(ray_in.dir.unit_vector(), rec.normal);
         let scattered = Ray {
             orig: rec.p.clone(),
@@ -56,7 +56,7 @@ pub struct Dialectric {
 }
 
 impl Material for Dialectric {
-    fn scatter(&self, ray_in: &mut Ray, rec: &HitRecord) -> Option<(Ray, Color)> {
+    fn scatter(&self, ray_in: &Ray, rec: &HitRecord) -> Option<(Ray, Color)> {
         let refraction_ratio: f32;
         if rec.front_face {
             refraction_ratio = 1.0 / self.ir;

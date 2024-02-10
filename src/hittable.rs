@@ -2,14 +2,15 @@ use crate::material::Material;
 use crate::ray::Ray;
 use crate::vec3::{Point3, Vec3};
 
-use std::{sync::Arc, vec::Vec};
+use std::rc::Rc;
+use std::vec::Vec;
 
 pub struct HitRecord {
     pub p: Point3,
     pub normal: Vec3,
     pub t: f32,
     pub front_face: bool,
-    pub mat: Arc<dyn Material + Sync + Send>,
+    pub mat: Rc<dyn Material>,
 }
 
 impl HitRecord {
@@ -28,7 +29,7 @@ pub trait Hittable {
 }
 
 pub struct HittableList {
-    pub objects: Vec<Box<dyn Hittable + Sync + Send>>,
+    pub objects: Vec<Box<dyn Hittable>>,
 }
 
 impl Hittable for HittableList {
